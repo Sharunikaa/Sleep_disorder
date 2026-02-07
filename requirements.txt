@@ -1,0 +1,11 @@
+concrete-ml
+flask
+pandas
+numpy
+scikit-learn
+pyrebase4
+firebase-admin
+python-dotenv
+gunicorn
+xgboost
+joblib

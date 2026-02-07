@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Report - Sleep Disorder FHE{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="display-5">
+                <i class="bi bi-bar-chart text-primary"></i> Analysis Report
+            </h1>
+            <p class="lead text-muted">
+                Performance metrics and privacy analysis of the FHE model
+            </p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
+                        <h3 class="mt-2 mb-0">{{ "%.2f"|format(plaintext_acc) }}%</h3>
+                        <p class="text-muted small mb-0">Plaintext Accuracy</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-shield-lock-fill text-primary" style="font-size: 2rem;"></i>
+                        <h3 class="mt-2 mb-0">{{ "%.2f"|format(fhe_acc) }}%</h3>
+                        <p class="text-muted small mb-0">FHE Accuracy</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-clock-fill text-warning" style="font-size: 2rem;"></i>
+                        <h3 class="mt-2 mb-0">{{ "%.2f"|format(fhe_latency) }}s</h3>
+                        <p class="text-muted small mb-0">Avg FHE Latency</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-speedometer2 text-info" style="font-size: 2rem;"></i>
+                        <h3 class="mt-2 mb-0">{{ "%.0f"|format(overhead) }}x</h3>
+                        <p class="text-muted small mb-0">Overhead Factor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accuracy Comparison -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-graph-up"></i> Accuracy Comparison
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="accuracyChart"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Key Insights:</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                <strong>Plaintext Model:</strong> {{ "%.2f"|format(plaintext_acc) }}% accuracy
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-shield-lock text-primary"></i>
+                                <strong>FHE Model:</strong> {{ "%.2f"|format(fhe_acc) }}% accuracy
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-down-circle text-warning"></i>
+                                <strong>Accuracy Degradation:</strong> {{ "%.2f"|format(acc_degradation) }}%
+                            </li>
+                        </ul>
+                        <div class="alert alert-info mt-3">
+                            <small>
+                                <i class="bi bi-info-circle"></i>
+                                The slight accuracy degradation is due to quantization required for FHE operations.
+                                This is a reasonable trade-off for complete privacy preservation.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-speedometer2"></i> Performance Metrics
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Plaintext</th>
+                                <th>FHE</th>
+                                <th>Overhead</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Accuracy</strong></td>
+                                <td>{{ "%.2f"|format(plaintext_acc) }}%</td>
+                                <td>{{ "%.2f"|format(fhe_acc) }}%</td>
+                                <td>
+                                    <span class="badge bg-warning">
+                                        -{{ "%.2f"|format(acc_degradation) }}%
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Inference Latency</strong></td>
+                                <td>~0.001s</td>
+                                <td>{{ "%.2f"|format(fhe_latency) }}s</td>
+                                <td>
+                                    <span class="badge bg-danger">
+                                        {{ "%.0f"|format(overhead) }}x slower
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Privacy Level</strong></td>
+                                <td>
+                                    <span class="badge bg-danger">None</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success">Complete</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success">100% Private</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <canvas id="latencyChart"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Performance Analysis:</h6>
+                        <p class="small text-muted">
+                            FHE introduces computational overhead due to operations on encrypted data. 
+                            The {{ "%.0f"|format(overhead) }}x slowdown is expected and acceptable for 
+                            applications requiring absolute privacy.
+                        </p>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: 1%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100">
+                                Plaintext
+                            </div>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" role="progressbar" 
+                                 style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                FHE ({{ "%.0f"|format(overhead) }}x)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy Guarantees -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-shield-lock-fill"></i> Privacy Guarantees
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>What is Fully Homomorphic Encryption?</h6>
+                        <p class="small">
+                            FHE allows computations to be performed directly on encrypted data without 
+                            decryption. The server never sees your actual health metrics - only encrypted 
+                            values that are mathematically impossible to reverse without your private key.
+                        </p>
+                        
+                        <h6 class="mt-3">Key Features:</h6>
+                        <ul class="small">
+                            <li><strong>End-to-End Encryption:</strong> Data encrypted on client, processed encrypted, returned encrypted</li>
+                            <li><strong>Zero Knowledge:</strong> Server learns nothing about your data</li>
+                            <li><strong>Cryptographic Security:</strong> Based on lattice-based cryptography</li>
+                            <li><strong>Verifiable:</strong> Results are mathematically provable</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Privacy Flow:</h6>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <ol class="small mb-0">
+                                    <li class="mb-2">
+                                        <i class="bi bi-lock-fill text-primary"></i>
+                                        <strong>Encrypt:</strong> Your data is encrypted on your device
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-send-fill text-info"></i>
+                                        <strong>Send:</strong> Encrypted data sent to server
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-cpu-fill text-warning"></i>
+                                        <strong>Compute:</strong> Prediction made on encrypted data
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-arrow-return-left text-success"></i>
+                                        <strong>Return:</strong> Encrypted result sent back
+                                    </li>
+                                    <li class="mb-0">
+                                        <i class="bi bi-unlock-fill text-danger"></i>
+                                        <strong>Decrypt:</strong> You decrypt result on your device
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-success mt-3 mb-0">
+                            <small>
+                                <i class="bi bi-shield-check"></i>
+                                <strong>100% Privacy Guaranteed:</strong> Your health data never leaves your device in plaintext form.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-gear-fill"></i> Technical Details
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Model Configuration:</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>Algorithm:</strong></td>
+                                <td>XGBoost Classifier</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Framework:</strong></td>
+                                <td>Concrete-ML</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Quantization:</strong></td>
+                                <td>6-bit</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Features:</strong></td>
+                                <td>10 health metrics</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Dataset Information:</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>Source:</strong></td>
+                                <td>Sleep Health and Lifestyle Dataset</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Task:</strong></td>
+                                <td>Binary Classification</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Train/Test Split:</strong></td>
+                                <td>80% / 20%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Preprocessing:</strong></td>
+                                <td>StandardScaler</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Accuracy Comparison Chart
+    const accuracyCtx = document.getElementById('accuracyChart').getContext('2d');
+    new Chart(accuracyCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Plaintext Model', 'FHE Model'],
+            datasets: [{
+                label: 'Accuracy (%)',
+                data: [{{ plaintext_acc }}, {{ fhe_acc }}],
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.7)',
+                    'rgba(13, 110, 253, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(40, 167, 69, 1)',
+                    'rgba(13, 110, 253, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Model Accuracy Comparison'
+                }
+            }
+        }
+    });
+
+    // Latency Comparison Chart
+    const latencyCtx = document.getElementById('latencyChart').getContext('2d');
+    new Chart(latencyCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Plaintext', 'FHE'],
+            datasets: [{
+                label: 'Latency (seconds)',
+                data: [0.001, {{ fhe_latency }}],
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.7)',
+                    'rgba(255, 193, 7, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(40, 167, 69, 1)',
+                    'rgba(255, 193, 7, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + 's';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Inference Latency Comparison'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

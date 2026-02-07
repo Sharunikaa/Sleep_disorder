@@ -1,0 +1,315 @@
+/**
+ * Custom styles for Sleep Disorder FHE Application
+ */
+
+/* Global Styles */
+:root {
+    --primary-color: #0d6efd;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --dark-color: #343a40;
+    --light-color: #f8f9fa;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f7fa;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar Styles */
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.navbar-brand i {
+    margin-right: 0.5rem;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header {
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+    font-weight: 600;
+}
+
+/* Form Styles */
+.form-label {
+    font-weight: 500;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.input-group-text {
+    background-color: var(--light-color);
+    border-color: #ced4da;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 0.5rem;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.2s;
+}
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.alert i {
+    font-size: 1.2rem;
+}
+
+/* Loading Spinner */
+#loadingSpinner {
+    padding: 2rem;
+}
+
+.spinner-border {
+    border-width: 0.3rem;
+}
+
+/* Result Card Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Result Card Styles */
+#resultCard {
+    border-left: 5px solid var(--primary-color);
+}
+
+#resultCard.success {
+    border-left-color: var(--success-color);
+}
+
+#resultCard.warning {
+    border-left-color: var(--warning-color);
+}
+
+#resultCard.danger {
+    border-left-color: var(--danger-color);
+}
+
+/* Tooltip Styles */
+.bi-info-circle {
+    cursor: help;
+    font-size: 0.9rem;
+}
+
+/* Footer Styles */
+footer {
+    margin-top: auto;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Chart Containers */
+canvas {
+    max-height: 300px;
+}
+
+/* Table Styles */
+.table {
+    background-color: white;
+}
+
+.table thead {
+    background-color: var(--light-color);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Badge Styles */
+.badge {
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+}
+
+/* Progress Bar Styles */
+.progress {
+    height: 1.5rem;
+    border-radius: 0.5rem;
+}
+
+.progress-bar {
+    font-weight: 600;
+}
+
+/* Input Validation Styles */
+.is-valid {
+    border-color: var(--success-color) !important;
+}
+
+.is-invalid {
+    border-color: var(--danger-color) !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Utility Classes */
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.shadow {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+/* Login/Register Page Styles */
+.card-body.p-5 {
+    padding: 3rem !important;
+}
+
+@media (max-width: 576px) {
+    .card-body.p-5 {
+        padding: 2rem !important;
+    }
+}
+
+/* Icon Styles */
+i.bi {
+    vertical-align: middle;
+}
+
+/* Metric Cards on Report Page */
+.card.text-center h3 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.card.text-center i {
+    opacity: 0.8;
+}
+
+/* Privacy Flow Ordered List */
+.card.bg-light ol {
+    padding-left: 1.5rem;
+}
+
+.card.bg-light ol li {
+    padding-left: 0.5rem;
+}
+
+/* Smooth Transitions */
+* {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    footer,
+    .btn,
+    #loadingSpinner {
+        display: none !important;
+    }
+    
+    .card {
+        page-break-inside: avoid;
+    }
+}
+
+/* Accessibility */
+.btn:focus,
+.form-control:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    /* Add dark mode styles here if needed */
+}
