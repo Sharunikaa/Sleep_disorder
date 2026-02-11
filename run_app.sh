@@ -1,22 +1,22 @@
 #!/bin/bash
 
-# Startup script for Alopecia Veil FHE Application
+bash# Startup script for Sleep Disorder FHE Application
 # This script uses the correct conda environment
 
 echo "=================================================="
-echo "  Alopecia Veil - FHE Sleep Disorder Prediction"
+echo "  Sleep Disorder - FHE Prediction System"
 echo "=================================================="
 echo ""
 
 # Set the correct Python path
-PYTHON_PATH="/Users/Sharunikaa/anaconda3/envs/hairloss_fhe/bin/python"
+PYTHON_PATH="/Users/Sharunikaa/anaconda3/envs/sleep_disorder_env/bin/python"
 
 # Check if Python exists
 if [ ! -f "$PYTHON_PATH" ]; then
     echo "❌ Error: Python not found at $PYTHON_PATH"
     echo "Please create the conda environment first:"
-    echo "  conda create -n hairloss_fhe python=3.10"
-    echo "  conda activate hairloss_fhe"
+    echo "  conda create -n sleep_disorder_env python=3.10"
+    echo "  conda activate sleep_disorder_env"
     echo "  pip install -r requirements.txt"
     exit 1
 fi

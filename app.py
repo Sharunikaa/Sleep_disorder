@@ -29,6 +29,13 @@ from security_logger import (
     log_performance_metrics,
     get_recent_events
 )
+from database import db
+from validation import (
+    validate_all_parameters,
+    get_risk_assessment,
+    get_recommendations,
+    PARAMETER_THRESHOLDS
+)
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -120,12 +127,17 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         # Check if Firebase is initialized
         if firebase is None:
-            # Demo mode - allow access
+            # Demo mode - allow access without authentication
+            request.user = {'email': 'demo@localhost', 'demo_mode': True}
             return f(*args, **kwargs)
         
         # Check if user is logged in
         user_email = session.get('user_email')
         if not user_email:
+            # If it's an API request (JSON), return JSON error instead of redirect
+            if request.is_json or request.path.startswith('/api/'):
+                return jsonify({'error': 'Authentication required'}), 401
+            
             flash('Please log in to access this page.', 'warning')
             return redirect(url_for('login'))
         
@@ -157,12 +169,7 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    """User registration page."""
-    # If Firebase not initialized, redirect to predict
-    if firebase is None:
-        flash('Running in demo mode. Authentication disabled.', 'info')
-        return redirect(url_for('predict'))
-    
+    """User registration page - supports both local and Firebase auth."""
     if request.method == 'POST':
         # Check if it's Google auth (JSON request)
         if request.is_json:
@@ -170,60 +177,57 @@ def register():
             id_token = data.get('idToken')
             provider = data.get('provider')
             
-            if provider == 'google' and id_token:
+            if provider == 'google' and id_token and firebase:
                 try:
                     # Verify Google ID token
                     decoded_token = fb_auth.verify_id_token(id_token)
+                    email = decoded_token.get('email')
+                    
+                    # Register in local database
+                    db.register_firebase_user(email, decoded_token.get('name'))
+                    
                     session['id_token'] = id_token
-                    session['user_email'] = decoded_token.get('email')
+                    session['user_email'] = email
+                    session['auth_provider'] = 'firebase'
                     return jsonify({'success': True, 'redirect': url_for('predict')})
                 except Exception as e:
                     return jsonify({'success': False, 'error': str(e)}), 400
         
-        # Email/Password registration
+        # Email/Password registration (Local SQLite)
         email = request.form.get('email')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
+        full_name = request.form.get('full_name', '')
         
         # Validation
         if not email or not password:
             flash('Email and password are required.', 'danger')
-            return render_template('register.html', config=config)
+            return render_template('register.html', config=config, firebase=firebase)
         
         if password != confirm_password:
             flash('Passwords do not match.', 'danger')
-            return render_template('register.html', config=config)
+            return render_template('register.html', config=config, firebase=firebase)
         
         if len(password) < 6:
             flash('Password must be at least 6 characters.', 'danger')
-            return render_template('register.html', config=config)
+            return render_template('register.html', config=config, firebase=firebase)
         
-        try:
-            # Create user with Firebase
-            user = fb_auth_client.create_user_with_email_and_password(email, password)
+        # Register in local SQLite database
+        success, message = db.register_user(email, password, full_name)
+        
+        if success:
             flash('Registration successful! Please log in.', 'success')
             return redirect(url_for('login'))
-        except Exception as e:
-            error_message = str(e)
-            if 'EMAIL_EXISTS' in error_message:
-                flash('Email already registered. Please log in.', 'warning')
-            elif 'WEAK_PASSWORD' in error_message:
-                flash('Password is too weak. Please use a stronger password.', 'danger')
-            else:
-                flash(f'Registration failed: {error_message}', 'danger')
-            return render_template('register.html', config=config)
+        else:
+            flash(message, 'danger')
+            return render_template('register.html', config=config, firebase=firebase)
     
-    return render_template('register.html', config=config)
+    return render_template('register.html', config=config, firebase=firebase)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """User login page."""
-    # If Firebase not initialized, redirect to predict
-    if firebase is None:
-        flash('Running in demo mode. Authentication disabled.', 'info')
-        return redirect(url_for('predict'))
-    
+    """User login page - supports both local and Firebase auth."""
     if request.method == 'POST':
         # Check if it's Google auth (JSON request)
         if request.is_json:
@@ -231,7 +235,7 @@ def login():
             id_token = data.get('idToken')
             provider = data.get('provider')
             
-            if provider == 'google' and id_token:
+            if provider == 'google' and id_token and firebase:
                 try:
                     # Try to verify token if Admin SDK is available
                     try:
@@ -252,36 +256,38 @@ def login():
                         except:
                             return jsonify({'success': False, 'error': 'Invalid token'}), 400
                     
+                    # Register/update in local database
+                    db.register_firebase_user(email, decoded_token.get('name', ''))
+                    
                     session['id_token'] = id_token
                     session['user_email'] = email
+                    session['auth_provider'] = 'firebase'
                     return jsonify({'success': True, 'redirect': url_for('predict')})
                 except Exception as e:
                     return jsonify({'success': False, 'error': str(e)}), 400
         
-        # Email/Password login
+        # Email/Password login (Local SQLite)
         email = request.form.get('email')
         password = request.form.get('password')
         
         if not email or not password:
             flash('Email and password are required.', 'danger')
-            return render_template('login.html', config=config)
+            return render_template('login.html', config=config, firebase=firebase)
         
-        try:
-            # Sign in with Firebase
-            user = fb_auth_client.sign_in_with_email_and_password(email, password)
-            session['id_token'] = user['idToken']
+        # Verify with local SQLite database
+        success, user_data = db.verify_user(email, password, request.remote_addr)
+        
+        if success:
             session['user_email'] = email
+            session['user_data'] = user_data
+            session['auth_provider'] = 'local'
             flash('Login successful!', 'success')
             return redirect(url_for('predict'))
-        except Exception as e:
-            error_message = str(e)
-            if 'INVALID_PASSWORD' in error_message or 'EMAIL_NOT_FOUND' in error_message:
-                flash('Invalid email or password.', 'danger')
-            else:
-                flash(f'Login failed: {error_message}', 'danger')
-            return render_template('login.html', config=config)
+        else:
+            flash('Invalid email or password.', 'danger')
+            return render_template('login.html', config=config, firebase=firebase)
     
-    return render_template('login.html', config=config)
+    return render_template('login.html', config=config, firebase=firebase)
 
 
 @app.route('/logout')
@@ -320,6 +326,21 @@ def predict():
                     input_features[feature] = float(value)
                 except ValueError:
                     return jsonify({'error': f'Invalid value for {feature}'}), 400
+            
+            # Validate input parameters
+            is_valid, errors, warnings = validate_all_parameters(input_features)
+            
+            if not is_valid:
+                return jsonify({
+                    'error': 'Invalid input parameters',
+                    'validation_errors': errors
+                }), 400
+            
+            # Get risk assessment
+            risk_assessment = get_risk_assessment(input_features)
+            
+            # Get recommendations
+            recommendations = get_recommendations(input_features)
             
             # Preprocess input
             X_scaled = preprocess_single_input(input_features, scaler)
@@ -416,7 +437,10 @@ def predict():
                 'interpretation': interpretations.get(result_label, ''),
                 'latency_ms': latency * 1000,
                 'features': input_features,
-                'mode': mode
+                'mode': mode,
+                'validation_warnings': warnings,
+                'risk_assessment': risk_assessment,
+                'recommendations': recommendations
             })
             
         except Exception as e:
@@ -427,6 +451,7 @@ def predict():
     # GET request - render form
     return render_template('predict.html', 
                          features=config.RAW_FEATURE_NAMES,
+                         thresholds=PARAMETER_THRESHOLDS,
                          config=config)
 
 
@@ -650,9 +675,39 @@ def health():
         'status': 'healthy',
         'firebase_initialized': firebase is not None,
         'model_loaded': fhe_server is not None,
-        'scaler_loaded': scaler is not None
+        'scaler_loaded': scaler is not None,
+        'database_initialized': True
     }
     return jsonify(status)
+
+
+@app.route('/api/validation/thresholds')
+def api_validation_thresholds():
+    """API endpoint to get validation thresholds."""
+    return jsonify({'thresholds': PARAMETER_THRESHOLDS})
+
+
+@app.route('/api/validation/validate', methods=['POST'])
+def api_validation_validate():
+    """API endpoint to validate input parameters."""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        is_valid, errors, warnings = validate_all_parameters(data)
+        risk_assessment = get_risk_assessment(data)
+        recommendations = get_recommendations(data)
+        
+        return jsonify({
+            'is_valid': is_valid,
+            'errors': errors,
+            'warnings': warnings,
+            'risk_assessment': risk_assessment,
+            'recommendations': recommendations
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.errorhandler(404)
