@@ -26,7 +26,7 @@ def evaluate_fhe_performance(num_samples=10):
     print("FHE PERFORMANCE EVALUATION")
     print("="*60)
     print(f"\nEvaluating {num_samples} samples with FHE...")
-    print("⚠️  This will take several minutes!\n")
+    print("This will take several minutes!\n")
     
     # Load dataset
     print("Loading dataset...")
@@ -55,10 +55,10 @@ def evaluate_fhe_performance(num_samples=10):
         # Generate keys for FHE evaluation
         print("Generating FHE keys (this may take a moment)...")
         client.generate_private_and_evaluation_keys()
-        print("✅ FHE model and keys loaded")
+        print("FHE model and keys loaded")
         
     except Exception as e:
-        print(f"❌ Failed to load FHE model: {e}")
+        print(f"Failed to load FHE model: {e}")
         print("Please train the model first: python model.py")
         return False
     
@@ -105,12 +105,12 @@ def evaluate_fhe_performance(num_samples=10):
             
             # Show actual vs predicted for first few samples
             if i < 5:
-                print(f"✅ {latency:.2f}s (predicted: {pred_value}, actual: {y_test_sample[i]}, output shape: {y_pred.shape})")
+                print(f"{latency:.2f}s (predicted: {pred_value}, actual: {y_test_sample[i]}, output shape: {y_pred.shape})")
             else:
-                print(f"✅ {latency:.2f}s (predicted: {pred_value})")
+                print(f"{latency:.2f}s (predicted: {pred_value})")
             
         except Exception as e:
-            print(f"❌ Failed: {e}")
+            print(f"Failed: {e}")
             import traceback
             traceback.print_exc()
             latency = time.time() - start_time
@@ -161,7 +161,7 @@ def evaluate_fhe_performance(num_samples=10):
     with open(metrics_path, 'w') as f:
         json.dump(metrics, f, indent=2)
     
-    print(f"\n✅ Metrics updated in {metrics_path}")
+    print(f"\nMetrics updated in {metrics_path}")
     print(f"\nOverhead factor: {overhead_factor:.0f}x")
     print(f"Accuracy degradation: {(plaintext_acc - accuracy)*100:.2f}%")
     print(f"\n{'='*60}\n")
@@ -186,7 +186,7 @@ if __name__ == "__main__":
             print("Example: python evaluate_fhe.py 20")
             sys.exit(1)
     
-    print(f"\n⚠️  FHE Evaluation will test {num_samples} samples")
+    print(f"\nFHE Evaluation will test {num_samples} samples")
     print(f"Estimated time: {num_samples * 10} seconds (~{num_samples * 10 / 60:.1f} minutes)")
     print("\nPress Ctrl+C to cancel, or wait 3 seconds to continue...")
     
@@ -199,16 +199,16 @@ if __name__ == "__main__":
     try:
         success = evaluate_fhe_performance(num_samples)
         if success:
-            print("✅ FHE evaluation complete!")
+            print("FHE evaluation complete!")
             print("\nNext steps:")
             print("1. Restart Flask app to load new metrics")
             print("2. Check /report page for updated FHE metrics")
             print("3. Make predictions to see real-time logging")
         else:
-            print("❌ FHE evaluation failed")
+            print("FHE evaluation failed")
             sys.exit(1)
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\nError: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

@@ -70,13 +70,12 @@ class SleepDisorderFHEModel:
         print(f"Features: {X_train.shape[1]}")
         
         # Initialize Concrete-ML Random Forest classifier
-        # Reduced complexity to avoid segfaults during FHE compilation
         self.model = RandomForestClassifier(
             n_bits=self.n_bits,
-            n_estimators=10,  # Reduced from 100 to avoid segfault
-            max_depth=5,      # Reduced from 10 to simplify FHE circuit
+            n_estimators=10,  
+            max_depth=5,      
             random_state=42,
-            n_jobs=1          # Single thread to avoid concurrency issues
+            n_jobs=1          
         )
         
         # Train the model
@@ -265,14 +264,14 @@ class SleepDisorderFHEModel:
             else:
                 # For Concrete-ML models, save the model itself (will work for inference)
                 # The FHE circuit is already saved by FHEModelDev
-                print(f"⚠️  Concrete-ML model cannot be pickled directly")
+                print(f"Concrete-ML model cannot be pickled directly")
                 print(f"   FHE circuit saved to {model_dir} (use FHEModelServer to load)")
                 # Create a placeholder file so evaluate_fhe.py knows the model exists
                 with open(model_pkl_path, 'w') as f:
                     f.write("# Concrete-ML model - use FHEModelServer to load\n")
                 print(f"Placeholder created at {model_pkl_path}")
         except Exception as e:
-            print(f"⚠️  Could not save model.pkl: {e}")
+            print(f"Could not save model.pkl: {e}")
             print(f"   FHE circuit is saved and can be loaded with FHEModelServer")
         
         # Save scaler
@@ -361,13 +360,13 @@ def train_and_compile(
     # Step 4: Evaluate FHE (optional, slow)
     if evaluate_fhe:
         print("\nStep 4: Evaluating FHE performance...")
-        print("⚠️  Warning: This will be slow! Testing only a few samples.")
+        print("Warning: This will be slow! Testing only a few samples.")
         try:
             model.evaluate_fhe(X_test_scaled, y_test, num_samples=num_fhe_samples)
         except KeyboardInterrupt:
-            print("\n⚠️  FHE evaluation interrupted by user. Saving model anyway...")
+            print("\nFHE evaluation interrupted by user. Saving model anyway...")
         except Exception as e:
-            print(f"\n⚠️  FHE evaluation failed: {e}. Saving model anyway...")
+            print(f"\nFHE evaluation failed: {e}. Saving model anyway...")
     else:
         print("\nStep 4: Skipping FHE evaluation (use --evaluate-fhe to enable)")
     
@@ -445,17 +444,11 @@ if __name__ == "__main__":
             evaluate_fhe=evaluate_fhe,
             num_fhe_samples=num_samples
         )
-        
-        print("\n✅ Model training and compilation complete!")
-        print(f"\nNext steps:")
-        print(f"1. Set up Firebase (see FIREBASE_SETUP.md)")
-        print(f"2. Create .env file with your Firebase credentials")
-        print(f"3. Run the Flask app: python app.py")
-        
+                
     except FileNotFoundError as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\n Error: {e}")
         print(f"\nPlease ensure your dataset is at: {config.DATASET_PATH}")
     except Exception as e:
-        print(f"\n❌ Error during training: {e}")
+        print(f"\nError during training: {e}")
         import traceback
         traceback.print_exc()

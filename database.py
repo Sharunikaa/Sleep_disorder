@@ -58,7 +58,7 @@ class Database:
         conn.commit()
         conn.close()
         
-        print("✅ SQLite database initialized")
+        print("SQLite database initialized")
     
     def _hash_password(self, password, salt=None):
         """

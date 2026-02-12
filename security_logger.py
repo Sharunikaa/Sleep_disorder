@@ -173,7 +173,7 @@ class FHESecurityLogger:
         if 'encryption_time' in encryption_info:
             self.logger.info("⏱️  Encryption Time: %.4f seconds", encryption_info['encryption_time'])
         
-        self.logger.info("✅ Data encrypted successfully")
+        self.logger.info("Data encrypted successfully")
         self.logger.info("📤 Ready to send to server")
         self.logger.info("")
         
@@ -214,10 +214,10 @@ class FHESecurityLogger:
         
         # Privacy warning
         self.logger.info("")
-        self.logger.info("⚠️  PRIVACY CHECK:")
-        self.logger.info("   ❌ Server CANNOT decrypt this data")
-        self.logger.info("   ❌ Server does NOT have private key")
-        self.logger.info("   ✅ Server can only compute on encrypted data")
+        self.logger.info("PRIVACY CHECK:")
+        self.logger.info("   Server CANNOT decrypt this data")
+        self.logger.info("   Server does NOT have private key")
+        self.logger.info("   Server can only compute on encrypted data")
         self.logger.info("")
         
         # Add to events
@@ -240,7 +240,7 @@ class FHESecurityLogger:
         if mode == 'fhe':
             self.log_separator("⚙️  FHE INFERENCE - ENCRYPTED COMPUTATION")
             self.logger.info("🔐 Computing on ENCRYPTED data")
-            self.logger.info("⚠️  Server cannot see actual values")
+            self.logger.info("Server cannot see actual values")
         else:
             self.log_separator("⚙️  PLAINTEXT INFERENCE")
             self.logger.info("📝 Computing on PLAINTEXT data (fallback mode)")
@@ -248,7 +248,7 @@ class FHESecurityLogger:
         if 'duration' in inference_info:
             self.logger.info("⏱️  Inference Time: %.2f seconds", inference_info['duration'])
         
-        self.logger.info("✅ Computation complete")
+        self.logger.info("Computation complete")
         self.logger.info("")
         
         # Add to events
@@ -285,9 +285,9 @@ class FHESecurityLogger:
                 self.logger.info("📊 Output Size: %d bytes (%.2f KB)", size, size/1024)
             
             self.logger.info("")
-            self.logger.info("⚠️  PRIVACY CHECK:")
-            self.logger.info("   ❌ Server CANNOT read this result")
-            self.logger.info("   ✅ Only client can decrypt with private key")
+            self.logger.info("PRIVACY CHECK:")
+            self.logger.info("   Server CANNOT read this result")
+            self.logger.info("   Only client can decrypt with private key")
         else:
             self.logger.info("📝 Plaintext result (fallback mode)")
         
@@ -324,7 +324,7 @@ class FHESecurityLogger:
         
         if 'decrypted_result' in decryption_info:
             result = decryption_info['decrypted_result']
-            self.logger.info("✅ Decrypted Result: %s", result)
+            self.logger.info("Decrypted Result: %s", result)
         
         self.logger.info("")
         
@@ -346,11 +346,11 @@ class FHESecurityLogger:
         
         self.logger.info("Security Checks:")
         self.logger.info("  Server has private key: %s", 
-                        "❌ NO (Secure)" if not check_info.get('server_has_private_key') else "⚠️  YES (INSECURE)")
+                        "NO (Secure)" if not check_info.get('server_has_private_key') else "YES (INSECURE)")
         self.logger.info("  Server can decrypt: %s", 
-                        "❌ NO (Secure)" if not check_info.get('server_can_decrypt') else "⚠️  YES (INSECURE)")
+                        "NO (Secure)" if not check_info.get('server_can_decrypt') else "YES (INSECURE)")
         self.logger.info("  Data exposed in plaintext: %s", 
-                        "❌ NO (Secure)" if not check_info.get('data_exposed') else "⚠️  YES (INSECURE)")
+                        "NO (Secure)" if not check_info.get('data_exposed') else "YES (INSECURE)")
         
         all_secure = (
             not check_info.get('server_has_private_key', False) and
@@ -359,9 +359,9 @@ class FHESecurityLogger:
         )
         
         if all_secure:
-            self.logger.info("✅ All privacy checks passed!")
+            self.logger.info("All privacy checks passed!")
         else:
-            self.logger.info("⚠️  Privacy concerns detected!")
+            self.logger.info("Privacy concerns detected!")
         
         self.logger.info("")
         
@@ -489,11 +489,11 @@ class FHESecurityLogger:
         self.log_separator("🛡️  SECURITY SUMMARY")
         
         self.logger.info("Privacy Guarantees:")
-        self.logger.info("  ✅ Private key never left client device")
-        self.logger.info("  ✅ Server never saw plaintext input data")
-        self.logger.info("  ✅ Server never saw plaintext prediction result")
-        self.logger.info("  ✅ All computations performed on encrypted data")
-        self.logger.info("  ✅ Only client can decrypt the result")
+        self.logger.info("  Private key never left client device")
+        self.logger.info("  Server never saw plaintext input data")
+        self.logger.info("  Server never saw plaintext prediction result")
+        self.logger.info("  All computations performed on encrypted data")
+        self.logger.info("  Only client can decrypt the result")
         self.logger.info("")
         self.logger.info("🔐 This is TRUE privacy-preserving inference!")
         self.logger.info("")

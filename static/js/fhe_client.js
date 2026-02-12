@@ -141,7 +141,7 @@ class FHEClient {
             key_fingerprint: this.hashData(this.privateKey).substring(0, 16)
         });
         
-        console.log('✅ Keys generated successfully');
+        console.log('Keys generated successfully');
         console.log(`   Private key: ${this.privateKey.length} bytes (KEPT SECRET)`);
         console.log(`   Evaluation keys: ${(this.evaluationKeys.length / (1024*1024)).toFixed(2)} MB (will be sent to server)`);
         
@@ -184,7 +184,7 @@ class FHEClient {
             encrypted_size: encryptedData.length
         });
         
-        console.log('✅ Data encrypted');
+        console.log('Data encrypted');
         console.log(`   Original size: ${plainBytes.length} bytes`);
         console.log(`   Encrypted size: ${(encryptedData.length / 1024).toFixed(2)} KB`);
         console.log(`   Overhead: ${(encryptedData.length / plainBytes.length).toFixed(0)}x`);
@@ -232,7 +232,7 @@ class FHEClient {
             decryption_time: decryptionTime
         });
         
-        console.log('✅ Result decrypted');
+        console.log('Result decrypted');
         console.log('   Decrypted result:', decryptedResult);
         
         return decryptedResult;
@@ -244,7 +244,7 @@ class FHEClient {
     async sendToServer(encryptedData) {
         console.log('📤 Sending encrypted data to server...');
         console.log(`   Size: ${(encryptedData.length / 1024).toFixed(2)} KB`);
-        console.log('   ⚠️  Server will NOT be able to see plaintext!');
+        console.log('   Server will NOT be able to see plaintext!');
         
         try {
             const response = await fetch('/predict_fhe', {
@@ -269,7 +269,7 @@ class FHEClient {
             return new Uint8Array(encryptedResult);
             
         } catch (error) {
-            console.error('❌ Server communication failed:', error);
+            console.error('Server communication failed:', error);
             console.error('Error details:', error.message);
             throw error;
         }
@@ -315,7 +315,7 @@ class FHEClient {
             });
             
             console.log('\n' + '='.repeat(60));
-            console.log('✅ FHE PREDICTION COMPLETED');
+            console.log('FHE PREDICTION COMPLETED');
             console.log('='.repeat(60));
             console.log(`⏱️  Total time: ${totalTime.toFixed(2)}s`);
             console.log('🛡️  Privacy preserved: Server never saw your data!');
@@ -324,7 +324,7 @@ class FHEClient {
             return decryptedResult;
             
         } catch (error) {
-            console.error('\n❌ FHE prediction failed:', error);
+            console.error('\nFHE prediction failed:', error);
             throw error;
         }
     }

@@ -157,11 +157,11 @@ def validate_parameter(param_name, value):
     # Warning checks
     if 'warning_low' in threshold and threshold['warning_low'] is not None:
         if value < threshold['warning_low']:
-            warnings.append(f"⚠️ {param_name} is below recommended minimum ({threshold['warning_low']} {threshold['unit']})")
+            warnings.append(f"{param_name} is below recommended minimum ({threshold['warning_low']} {threshold['unit']})")
     
     if 'warning_high' in threshold and threshold['warning_high'] is not None:
         if value > threshold['warning_high']:
-            warnings.append(f"⚠️ {param_name} is above recommended maximum ({threshold['warning_high']} {threshold['unit']})")
+            warnings.append(f"{param_name} is above recommended maximum ({threshold['warning_high']} {threshold['unit']})")
     
     # Optimal range checks
     if 'optimal_min' in threshold and value < threshold['optimal_min']:
@@ -399,7 +399,7 @@ if __name__ == "__main__":
     
     # Validate all
     is_valid, errors, warnings = validate_all_parameters(test_data)
-    print(f"\nValidation: {'✅ Valid' if is_valid else '❌ Invalid'}")
+    print(f"\nValidation: {'Valid' if is_valid else 'Invalid'}")
     
     if errors:
         print("\nErrors:")

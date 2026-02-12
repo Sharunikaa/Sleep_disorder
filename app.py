@@ -58,7 +58,7 @@ def init_firebase():
     try:
         # Check if Firebase config is valid
         if not config.validate():
-            print("⚠️  Warning: Firebase not configured. Using demo mode.")
+            print("Warning: Firebase not configured. Using demo mode.")
             return False
         
         # Initialize Pyrebase for client-side auth
@@ -69,21 +69,21 @@ def init_firebase():
         if config.FIREBASE_SERVICE_ACCOUNT and os.path.exists(config.FIREBASE_SERVICE_ACCOUNT):
             cred = credentials.Certificate(config.FIREBASE_SERVICE_ACCOUNT)
             firebase_admin.initialize_app(cred)
-            print("✅ Firebase Admin SDK initialized successfully")
+            print("Firebase Admin SDK initialized successfully")
             return True
         else:
             # Initialize without service account (simplified mode)
             # This allows Google Sign-In to work without Admin SDK
             try:
                 firebase_admin.initialize_app()
-                print("✅ Firebase initialized (simplified mode - no token verification)")
+                print("Firebase initialized (simplified mode - no token verification)")
             except ValueError:
                 # Already initialized
                 pass
             return True
             
     except Exception as e:
-        print(f"⚠️  Firebase initialization failed: {e}")
+        print(f"Firebase initialization failed: {e}")
         print("Running in demo mode without authentication.")
         return False
 
@@ -95,7 +95,7 @@ def init_model():
     try:
         # Check if model exists
         if not os.path.exists(config.MODEL_PATH):
-            print(f"⚠️  Warning: FHE model not found at {config.MODEL_PATH}")
+            print(f"Warning: FHE model not found at {config.MODEL_PATH}")
             print("Please run 'python model.py' to train the model first.")
             return False
         
@@ -106,17 +106,17 @@ def init_model():
         if os.path.exists(config.SCALER_PATH):
             scaler = load_scaler()
         else:
-            print(f"⚠️  Warning: Scaler not found at {config.SCALER_PATH}")
+            print(f"Warning: Scaler not found at {config.SCALER_PATH}")
             return False
         
         # Load metrics
         metrics = load_metrics()
         
-        print("✅ Model and scaler loaded successfully")
+        print("Model and scaler loaded successfully")
         return True
         
     except Exception as e:
-        print(f"❌ Error loading model: {e}")
+        print(f"Error loading model: {e}")
         traceback.print_exc()
         return False
 
@@ -179,12 +179,34 @@ def register():
             
             if provider == 'google' and id_token and firebase:
                 try:
-                    # Verify Google ID token
-                    decoded_token = fb_auth.verify_id_token(id_token)
-                    email = decoded_token.get('email')
+                    # Initialize variables
+                    email = None
+                    user_name = ''
+                    decoded_token = None
+                    
+                    # Try to verify Google ID token
+                    try:
+                        decoded_token = fb_auth.verify_id_token(id_token)
+                        email = decoded_token.get('email')
+                        user_name = decoded_token.get('name', '')
+                    except Exception as verify_error:
+                        # If verification fails, extract email from token (basic validation)
+                        print(f"Token verification skipped: {verify_error}")
+                        import base64
+                        import json as json_lib
+                        try:
+                            # Decode JWT payload (without verification - for demo only)
+                            payload = id_token.split('.')[1]
+                            payload += '=' * (4 - len(payload) % 4)
+                            decoded = base64.b64decode(payload)
+                            token_data = json_lib.loads(decoded)
+                            email = token_data.get('email')
+                            user_name = token_data.get('name', '')
+                        except:
+                            return jsonify({'success': False, 'error': 'Invalid token'}), 400
                     
                     # Register in local database
-                    db.register_firebase_user(email, decoded_token.get('name'))
+                    db.register_firebase_user(email, user_name)
                     
                     session['id_token'] = id_token
                     session['user_email'] = email
@@ -237,10 +259,16 @@ def login():
             
             if provider == 'google' and id_token and firebase:
                 try:
+                    # Initialize variables
+                    email = None
+                    user_name = ''
+                    decoded_token = None
+                    
                     # Try to verify token if Admin SDK is available
                     try:
                         decoded_token = fb_auth.verify_id_token(id_token)
                         email = decoded_token.get('email')
+                        user_name = decoded_token.get('name', '')
                     except Exception as verify_error:
                         # If verification fails, extract email from token (basic validation)
                         print(f"Token verification skipped: {verify_error}")
@@ -253,11 +281,12 @@ def login():
                             decoded = base64.b64decode(payload)
                             token_data = json_lib.loads(decoded)
                             email = token_data.get('email')
+                            user_name = token_data.get('name', '')
                         except:
                             return jsonify({'success': False, 'error': 'Invalid token'}), 400
                     
                     # Register/update in local database
-                    db.register_firebase_user(email, decoded_token.get('name', ''))
+                    db.register_firebase_user(email, user_name)
                     
                     session['id_token'] = id_token
                     session['user_email'] = email
@@ -425,7 +454,7 @@ def predict():
                 'size': len(result_text)
             })
             
-            print(f"\n✅ Prediction completed:")
+            print(f"\nPrediction completed:")
             print(f"   Mode: {mode}")
             print(f"   Result: {result_label}")
             print(f"   Latency: {latency*1000:.2f}ms")
@@ -734,7 +763,7 @@ if __name__ == '__main__':
     model_ok = init_model()
     
     if not model_ok:
-        print("\n⚠️  Warning: Model not loaded. Please run 'python model.py' first.")
+        print("\nWarning: Model not loaded. Please run 'python model.py' first.")
         print("The app will start but predictions will not work.\n")
     
     print(f"{'='*60}")

@@ -26,7 +26,7 @@ This application demonstrates how to build a privacy-first machine learning syst
 - **Fast Training**: <1 second training time
 - **FHE Compilation**: 6-bit quantization for optimal performance
 
-#### ✅ Input Validation
+#### Input Validation
 - **Parameter Thresholds**: Min/max ranges for all inputs
 - **Optimal Range Warnings**: Guidance for healthy values
 - **Risk Assessment**: Automated risk scoring (Low/Moderate/High)
@@ -188,11 +188,11 @@ The application will start at **http://127.0.0.1:5000**
 4. Session created
 
 #### Security Features
-- ✅ **SHA-256 Hashing**: Cryptographic hash with salt
-- ✅ **Unique Salt**: 64-character hex salt per user
-- ✅ **Login Logging**: All attempts tracked with IP and timestamp
-- ✅ **Local Storage**: Data never leaves your server
-- ✅ **Offline Capable**: No internet required
+- **SHA-256 Hashing**: Cryptographic hash with salt
+- **Unique Salt**: 64-character hex salt per user
+- **Login Logging**: All attempts tracked with IP and timestamp
+- **Local Storage**: Data never leaves your server
+- **Offline Capable**: No internet required
 
 ### Firebase Authentication (Optional)
 
@@ -425,11 +425,11 @@ Sleep_disorder/
 5. All attempts logged with IP address
 
 **Benefits:**
-- ✅ No cloud dependency
-- ✅ Complete privacy
-- ✅ Works offline
-- ✅ Free (no Firebase costs)
-- ✅ Full control over user data
+- No cloud dependency
+- Complete privacy
+- Works offline
+- Free (no Firebase costs)
+- Full control over user data
 
 **Security:**
 - SHA-256 cryptographic hash
@@ -447,10 +447,10 @@ Sleep_disorder/
 5. Session created
 
 **Benefits:**
-- ✅ Google Sign-In
-- ✅ No password management
-- ✅ Social authentication
-- ✅ Token-based security
+- Google Sign-In
+- No password management
+- Social authentication
+- Token-based security
 
 **Setup:**
 1. Create Firebase project
@@ -498,9 +498,9 @@ Sleep_disorder/
 
 **Validation Result:**
 ```
-✅ All parameters within valid ranges
+All parameters within valid ranges
 
-⚠️ Warnings:
+Warnings:
 - Sleep Duration below optimal (should be 7-9 hours)
 - Quality of Sleep below average
 - Stress Level above recommended maximum
@@ -588,10 +588,10 @@ python database.py
 ```
 
 **Expected output:**
-- ✅ User registration successful
-- ✅ Login verification working
-- ✅ Wrong password rejected
-- ✅ Statistics generated
+- User registration successful
+- Login verification working
+- Wrong password rejected
+- Statistics generated
 
 ### Test Validation
 ```bash
@@ -599,10 +599,10 @@ python validation.py
 ```
 
 **Expected output:**
-- ✅ Parameter validation working
-- ✅ Warnings generated correctly
-- ✅ Risk assessment calculated
-- ✅ Recommendations provided
+- Parameter validation working
+- Warnings generated correctly
+- Risk assessment calculated
+- Recommendations provided
 
 ### Test Application
 ```bash
@@ -653,24 +653,24 @@ Sleep Apnea         1         5         10       (62.5%)
 ## 🔒 Security Considerations
 
 ### Password Security
-- ✅ SHA-256 hashing (256-bit)
-- ✅ Unique salt per user (64 characters)
-- ✅ One-way hashing (irreversible)
-- ✅ No plaintext passwords stored
-- ✅ Constant-time comparison
+- SHA-256 hashing (256-bit)
+- Unique salt per user (64 characters)
+- One-way hashing (irreversible)
+- No plaintext passwords stored
+- Constant-time comparison
 
 ### Database Security
-- ✅ Local SQLite storage
-- ✅ Parameterized queries (SQL injection prevention)
-- ✅ Transaction management
-- ✅ Audit trail (login attempts)
+- Local SQLite storage
+- Parameterized queries (SQL injection prevention)
+- Transaction management
+- Audit trail (login attempts)
 
 ### Application Security
-- ✅ Session management
-- ✅ CSRF protection (Flask)
-- ✅ Secure cookies
-- ✅ Input validation
-- ✅ Error handling
+- Session management
+- CSRF protection (Flask)
+- Secure cookies
+- Input validation
+- Error handling
 
 ### Production Recommendations
 1. **Enable HTTPS**: Use SSL/TLS certificates
@@ -836,10 +836,10 @@ python validation.py    # Test validation
 
 ## 🌐 Browser Support
 
-- ✅ Chrome/Edge (latest)
-- ✅ Firefox (latest)
-- ✅ Safari (latest)
-- ✅ Mobile browsers (iOS/Android)
+- Chrome/Edge (latest)
+- Firefox (latest)
+- Safari (latest)
+- Mobile browsers (iOS/Android)
 
 ---
 
@@ -895,27 +895,27 @@ curl http://127.0.0.1:5000/api/validation/thresholds
 ## 🏆 Success Metrics
 
 ### Implementation
-- ✅ Local SQLite authentication
-- ✅ SHA-256 password hashing
-- ✅ Input validation with thresholds
-- ✅ Risk assessment system
-- ✅ Health recommendations
-- ✅ Security audit dashboard
-- ✅ Modern UI design
-- ✅ Dual authentication support
+- Local SQLite authentication
+- SHA-256 password hashing
+- Input validation with thresholds
+- Risk assessment system
+- Health recommendations
+- Security audit dashboard
+- Modern UI design
+- Dual authentication support
 
 ### Testing
-- ✅ Database operations verified
-- ✅ Validation system tested
-- ✅ Authentication working
-- ✅ Predictions accurate
-- ✅ Security audit functional
+- Database operations verified
+- Validation system tested
+- Authentication working
+- Predictions accurate
+- Security audit functional
 
 ### Performance
-- ✅ Fast response times (<20ms)
-- ✅ Efficient validation (<1ms)
-- ✅ Quick authentication (<10ms)
-- ✅ Smooth user experience
+- Fast response times (<20ms)
+- Efficient validation (<1ms)
+- Quick authentication (<10ms)
+- Smooth user experience
 
 ---
 
@@ -955,13 +955,13 @@ This project is for educational and academic purposes.
 
 This Sleep Disorder FHE Application demonstrates:
 
-1. ✅ **Privacy-Preserving Machine Learning** with FHE
-2. ✅ **Secure Authentication** with local SQLite and Firebase
-3. ✅ **Comprehensive Input Validation** with thresholds
-4. ✅ **Risk Assessment** and health recommendations
-5. ✅ **Modern UI/UX** with responsive design
-6. ✅ **Security Monitoring** with audit dashboard
-7. ✅ **Production-Ready** code with proper error handling
+1. **Privacy-Preserving Machine Learning** with FHE
+2. **Secure Authentication** with local SQLite and Firebase
+3. **Comprehensive Input Validation** with thresholds
+4. **Risk Assessment** and health recommendations
+5. **Modern UI/UX** with responsive design
+6. **Security Monitoring** with audit dashboard
+7. **Production-Ready** code with proper error handling
 
 **Built with privacy, security, and user experience in mind.**
 
@@ -969,6 +969,6 @@ This Sleep Disorder FHE Application demonstrates:
 
 **Version**: 3.0  
 **Last Updated**: February 12, 2026  
-**Status**: Production Ready ✅  
+**Status**: Production Ready  
 **Environment**: sleep_disorder_env  
 **Python**: 3.10.19

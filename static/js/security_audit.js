@@ -339,7 +339,7 @@ async function exportEvents() {
 }
 
 async function clearEvents() {
-    if (!confirm('⚠️ Are you sure you want to clear all events? This cannot be undone.')) {
+    if (!confirm('Are you sure you want to clear all events? This cannot be undone.')) {
         return;
     }
     
@@ -469,13 +469,13 @@ function showEventDetail(index) {
                 <h3>🛡️ Privacy Guarantees</h3>
                 <div class="detail-grid">
                     <div class="detail-label">Server Access:</div>
-                    <div class="detail-value encrypted">❌ Cannot see plaintext data</div>
+                    <div class="detail-value encrypted">Cannot see plaintext data</div>
                     
                     <div class="detail-label">Encryption:</div>
-                    <div class="detail-value encrypted">✅ Fully Homomorphic Encryption (FHE)</div>
+                    <div class="detail-value encrypted">Fully Homomorphic Encryption (FHE)</div>
                     
                     <div class="detail-label">Data Privacy:</div>
-                    <div class="detail-value encrypted">✅ Computation on encrypted data</div>
+                    <div class="detail-value encrypted">Computation on encrypted data</div>
                     
                     <div class="detail-label">Key Location:</div>
                     <div class="detail-value encrypted">🔑 Private key never leaves client</div>
@@ -488,7 +488,7 @@ function showEventDetail(index) {
                 <h3>🛡️ Privacy Information</h3>
                 <div class="detail-grid">
                     <div class="detail-label">Client Access:</div>
-                    <div class="detail-value plaintext">✅ Can see plaintext data</div>
+                    <div class="detail-value plaintext">Can see plaintext data</div>
                     
                     <div class="detail-label">Location:</div>
                     <div class="detail-value plaintext">👤 Client-side operation</div>

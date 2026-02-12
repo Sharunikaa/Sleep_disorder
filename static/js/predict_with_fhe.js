@@ -5,6 +5,13 @@
 
 // Sample data for testing
 const sampleData = {
+    // Personal Information (not used in prediction)
+    'fullName': 'John Doe',
+    'emailAddress': 'john.doe@example.com',
+    'phoneNumber': '+1-555-123-4567',
+    'jobDescription': 'Software Engineer',
+    
+    // Health Metrics (used in prediction)
     'Gender': 'Male',
     'Age': 35,
     'Sleep Duration': 7.2,
@@ -58,8 +65,17 @@ document.getElementById('predictionForm').addEventListener('submit', async funct
         const formData = new FormData(e.target);
         const data = {};
         
+        // Fields to exclude from prediction (personal information only for display)
+        const excludedFields = ['fullName', 'emailAddress', 'phoneNumber', 'jobDescription'];
+        
         // Process each field
         for (let [key, value] of formData.entries()) {
+            // Skip personal information fields - they are not used in prediction
+            if (excludedFields.includes(key)) {
+                console.log(`ℹ️ Skipping personal field: ${key} (not used in prediction)`);
+                continue;
+            }
+            
             if (key === 'Gender') {
                 data['Gender_Encoded'] = value === 'Female' ? 0 : 1;
             } else if (key === 'BMI Category') {
@@ -89,13 +105,13 @@ document.getElementById('predictionForm').addEventListener('submit', async funct
             result = await predictPlaintext(data);
         }
         
-        console.log('✅ Prediction result:', result);
+        console.log('Prediction result:', result);
         
         // Display results
         displayResults(result);
         
     } catch (error) {
-        console.error('❌ Prediction error:', error);
+        console.error('Prediction error:', error);
         document.getElementById('errorMessage').textContent = error.message;
         errorAlert.style.display = 'block';
     } finally {
@@ -149,28 +165,28 @@ async function predictWithFHE(data) {
         const startKeyGen = performance.now();
         await fheClient.generateKeys();
         const keyGenTime = (performance.now() - startKeyGen) / 1000;
-        console.log(`✅ Keys generated in ${keyGenTime.toFixed(2)}s`);
+        console.log(`Keys generated in ${keyGenTime.toFixed(2)}s`);
         
         // Step 2: Encrypt data
         console.log('🔐 Encrypting input data...');
         const startEncrypt = performance.now();
         const encryptedData = await fheClient.encrypt(data);
         const encryptTime = (performance.now() - startEncrypt) / 1000;
-        console.log(`✅ Data encrypted in ${encryptTime.toFixed(2)}s`);
+        console.log(`Data encrypted in ${encryptTime.toFixed(2)}s`);
         
         // Step 3: Send to server for FHE inference
         console.log('📤 Sending encrypted data to server...');
         const startInference = performance.now();
         const encryptedResult = await fheClient.sendToServer(encryptedData);
         const inferenceTime = (performance.now() - startInference) / 1000;
-        console.log(`✅ Server inference completed in ${inferenceTime.toFixed(2)}s`);
+        console.log(`Server inference completed in ${inferenceTime.toFixed(2)}s`);
         
         // Step 4: Decrypt result
         console.log('🔓 Decrypting result...');
         const startDecrypt = performance.now();
         const decryptedResult = await fheClient.decrypt(encryptedResult);
         const decryptTime = (performance.now() - startDecrypt) / 1000;
-        console.log(`✅ Result decrypted in ${decryptTime.toFixed(2)}s`);
+        console.log(`Result decrypted in ${decryptTime.toFixed(2)}s`);
         
         // Total time
         const totalTime = keyGenTime + encryptTime + inferenceTime + decryptTime;
@@ -194,8 +210,8 @@ async function predictWithFHE(data) {
         };
         
     } catch (error) {
-        console.error('❌ FHE prediction failed:', error);
-        console.log('⚠️  Falling back to plaintext prediction...');
+        console.error('FHE prediction failed:', error);
+        console.log('Falling back to plaintext prediction...');
         return await predictPlaintext(data);
     }
 }

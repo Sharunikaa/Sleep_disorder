@@ -5,6 +5,13 @@
 
 // Sample data for testing
 const sampleData = {
+    // Personal Information (not used in prediction)
+    'fullName': 'John Doe',
+    'emailAddress': 'john.doe@example.com',
+    'phoneNumber': '+1-555-123-4567',
+    'jobDescription': 'Software Engineer',
+    
+    // Health Metrics (used in prediction)
     'Gender': 'Male',
     'Age': 35,
     'Sleep Duration': 7.2,
@@ -54,8 +61,17 @@ document.getElementById('predictionForm').addEventListener('submit', async funct
         const formData = new FormData(e.target);
         const data = {};
         
+        // Fields to exclude from prediction (personal information only for display)
+        const excludedFields = ['fullName', 'emailAddress', 'phoneNumber', 'jobDescription'];
+        
         // Process each field
         for (let [key, value] of formData.entries()) {
+            // Skip personal information fields - they are not used in prediction
+            if (excludedFields.includes(key)) {
+                console.log(`ℹ️ Skipping personal field: ${key} (not used in prediction)`);
+                continue;
+            }
+            
             if (key === 'Gender') {
                 // Encode gender: Female=0, Male=1
                 data['Gender_Encoded'] = value === 'Female' ? 0 : 1;

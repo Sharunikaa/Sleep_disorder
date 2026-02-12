@@ -5,6 +5,13 @@
 
 // Sample data for testing
 const sampleData = {
+    // Personal Information (not used in prediction)
+    'fullName': 'John Doe',
+    'emailAddress': 'john.doe@example.com',
+    'phoneNumber': '+1-555-123-4567',
+    'jobDescription': 'Software Engineer',
+    
+    // Health Metrics (used in prediction)
     'Gender': 'Male',
     'Age': 35,
     'Sleep Duration': 7.2,
@@ -62,8 +69,17 @@ document.getElementById('predictionForm').addEventListener('submit', async funct
         const formData = new FormData(e.target);
         const data = {};
         
+        // Fields to exclude from prediction (personal information only for display)
+        const excludedFields = ['fullName', 'emailAddress', 'phoneNumber', 'jobDescription'];
+        
         // Process each field
         for (let [key, value] of formData.entries()) {
+            // Skip personal information fields - they are not used in prediction
+            if (excludedFields.includes(key)) {
+                console.log(`ℹ️ Skipping personal field: ${key} (not used in prediction)`);
+                continue;
+            }
+            
             if (key === 'Gender') {
                 data['Gender_Encoded'] = value === 'Female' ? 0 : 1;
             } else if (key === 'BMI Category') {
@@ -93,7 +109,7 @@ document.getElementById('predictionForm').addEventListener('submit', async funct
         }
         
     } catch (error) {
-        console.error('❌ Prediction error:', error);
+        console.error('Prediction error:', error);
         document.getElementById('errorMessage').textContent = error.message;
         errorAlert.style.display = 'block';
     } finally {
@@ -142,7 +158,7 @@ async function runComparison(data) {
             latency_ms: plaintextResult.latency_ms
         };
         
-        console.log(`✅ Plaintext: ${plaintextResult.label} (${plaintextTime.toFixed(3)}s)`);
+        console.log(`Plaintext: ${plaintextResult.label} (${plaintextTime.toFixed(3)}s)`);
         
         // 2. Run FHE Prediction
         console.log('🔐 Running FHE prediction...');
@@ -161,9 +177,9 @@ async function runComparison(data) {
                 metrics: fheResult.fhe_metrics
             };
             
-            console.log(`✅ FHE: ${fheResult.label} (${fheTime.toFixed(3)}s)`);
+            console.log(`FHE: ${fheResult.label} (${fheTime.toFixed(3)}s)`);
         } catch (error) {
-            console.error('❌ FHE prediction failed:', error);
+            console.error('FHE prediction failed:', error);
             console.error('Error details:', error.stack);
             comparison.fhe = {
                 error: error.message || 'FHE prediction failed',
@@ -187,7 +203,7 @@ async function runComparison(data) {
         displayResults(plaintextResult, true);
         
     } catch (error) {
-        console.error('❌ Comparison failed:', error);
+        console.error('Comparison failed:', error);
         if (comparisonBody) {
             comparisonBody.innerHTML = `
                 <div class="alert alert-danger">

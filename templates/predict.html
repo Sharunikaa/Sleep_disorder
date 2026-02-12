@@ -21,11 +21,91 @@
         <div class="card shadow">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">
-                    <i class="bi bi-clipboard-data"></i> Enter Your Health Metrics
+                    <i class="bi bi-clipboard-data"></i> Enter Your Data
                 </h5>
             </div>
             <div class="card-body">
                 <form id="predictionForm">
+                    <!-- Personal Information Section -->
+                    <div class="mb-4 pb-3 border-bottom">
+                        <h6 class="text-primary mb-3">
+                            <i class="bi bi-person-badge"></i> Personal Information
+                        </h6>
+                        <div class="row">
+                            <!-- Full Name -->
+                            <div class="col-md-6 mb-3">
+                                <label for="fullName" class="form-label">
+                                    Full Name
+                                    <i class="bi bi-info-circle text-muted" data-bs-toggle="tooltip" title="Your full name"></i>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    id="fullName" 
+                                    name="fullName" 
+                                    required
+                                    placeholder="e.g., John Doe"
+                                >
+                            </div>
+
+                            <!-- Email Address -->
+                            <div class="col-md-6 mb-3">
+                                <label for="emailAddress" class="form-label">
+                                    Email Address
+                                    <i class="bi bi-info-circle text-muted" data-bs-toggle="tooltip" title="Your email address"></i>
+                                </label>
+                                <input 
+                                    type="email" 
+                                    class="form-control" 
+                                    id="emailAddress" 
+                                    name="emailAddress" 
+                                    required
+                                    placeholder="e.g., john.doe@example.com"
+                                >
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="col-md-6 mb-3">
+                                <label for="phoneNumber" class="form-label">
+                                    Phone Number
+                                    <i class="bi bi-info-circle text-muted" data-bs-toggle="tooltip" title="Your contact number"></i>
+                                </label>
+                                <input 
+                                    type="tel" 
+                                    class="form-control" 
+                                    id="phoneNumber" 
+                                    name="phoneNumber" 
+                                    required
+                                    placeholder="e.g., +1-234-567-8900"
+                                    pattern="[\+]?[0-9\-\s\(\)]+"
+                                >
+                            </div>
+
+                            <!-- Job Description -->
+                            <div class="col-md-6 mb-3">
+                                <label for="jobDescription" class="form-label">
+                                    Occupation / Job Title
+                                    <i class="bi bi-info-circle text-muted" data-bs-toggle="tooltip" title="Your current occupation"></i>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    id="jobDescription" 
+                                    name="jobDescription" 
+                                    required
+                                    placeholder="e.g., Software Engineer"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Health Metrics Section -->
+                    <div class="mb-3">
+                        <h6 class="text-primary mb-3">
+                            <i class="bi bi-heart-pulse"></i> Health Metrics
+                        </h6>
+                    </div>
+
                     <div class="row">
                         <!-- Gender -->
                         <div class="col-md-6 mb-3">
